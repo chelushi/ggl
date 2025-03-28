@@ -18,14 +18,15 @@ class ScratchCard {
         this.rewards = [
             '奶茶！！',
             '冰！！',
-            '蛋糕！！'
+            '蛋糕！！',
+            '糖葫芦！'
         ];
         
         // 设置奖励概率
-        this.rewardProbabilities = [50, 30, 20];
+        this.rewardProbabilities = [40, 25, 10, 25];
         
         // 设置中奖区域数量的概率
-        this.winningAreaProbabilities = [25, 20, 18, 13, 10, 9];
+        this.winningAreaProbabilities = [35, 30, 15, 10, 6, 4];
         
         // 创建临时画布
         this.numberCanvas = document.createElement('canvas');
@@ -55,33 +56,33 @@ class ScratchCard {
         const rewardPatternPaths = [
             'images/reward_pattern1.png',  // 奖品刮开层图案1
             'images/reward_pattern2.jpg',  // 奖品刮开层图案2
-            'images/reward_pattern3.png',  // 奖品刮开层图案3
-            'images/reward_pattern4.png',  // 奖品刮开层图案4
-            'images/reward_pattern5.png'   // 奖品刮开层图案5
+            'images/reward_pattern3.jpg',  // 奖品刮开层图案3
+            'images/reward_pattern4.jpg',  // 奖品刮开层图案4
+            'images/reward_pattern5.jpg'   // 奖品刮开层图案5
         ];
 
         // 定义普通图片路径数组（至少20张）
         const normalImagePaths = [
             'images/normal1.png',
             'images/normal2.png',
-            'images/normal3.png',
-            'images/normal4.png',
-            'images/normal5.png',
-            'images/normal6.png',
-            'images/normal7.png',
-            'images/normal8.png',
-            'images/normal9.png',
-            'images/normal10.png',
-            'images/normal11.png',
-            'images/normal12.png',
-            'images/normal13.png',
-            'images/normal14.png',
-            'images/normal15.png',
-            'images/normal16.png',
-            'images/normal17.png',
-            'images/normal18.png',
-            'images/normal19.png',
-            'images/normal20.png'
+            'images/normal3.jpg',
+            'images/normal4.jpg',
+            'images/normal5.jpg',
+            'images/normal6.jpg',
+            'images/normal7.jpg',
+            'images/normal8.jpg',
+            'images/normal9.jpg',
+            'images/normal10.jpg',
+            'images/normal11.jpg',
+            'images/normal12.jpg',
+            'images/normal13.jpg',
+            'images/normal14.jpg',
+            'images/normal15.jpg',
+            'images/normal16.jpg',
+            'images/normal17.jpg',
+            'images/normal18.jpg',
+            'images/normal19.jpg',
+            'images/normal20.jpg'
         ];
 
         let loadedImages = 0;
@@ -228,7 +229,7 @@ class ScratchCard {
         this.ctx.font = 'bold 24px Microsoft YaHei';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(`中奖号码：${this.winningNumber}`, this.canvas.width / 2, 30);
+        this.ctx.fillText(`你好呀`, this.canvas.width / 2, 30);
         
         // 生成所有可用号码（0-100，除去中奖号码）
         const availableNumbers = Array.from({length: 101}, (_, i) => i)
@@ -317,7 +318,7 @@ class ScratchCard {
         this.numberCtx.font = 'bold 24px Microsoft YaHei';
         this.numberCtx.textAlign = 'center';
         this.numberCtx.textBaseline = 'middle';
-        this.numberCtx.fillText(`中奖号码：${this.winningNumber}`, this.canvas.width / 2, 30);
+        this.numberCtx.fillText(`你好呀！！！`, this.canvas.width / 2, 30);
         
         // 在临时画布上绘制数字和图案
         for (let row = 0; row < this.rows; row++) {
