@@ -24,17 +24,17 @@ class ScratchCard {
         
         // 设置奖励文字
         this.rewards = [
-            '奶茶！！',
+            '奶茶！',
             '冰！！',
-            '蛋糕！！',
-            '糖葫芦！'
+            '蛋糕！',
+            '糖葫芦'
         ];
         
         // 设置奖励概率
         this.rewardProbabilities = [40, 25, 10, 25];
         
         // 设置中奖区域数量的概率
-        this.winningAreaProbabilities = [35, 30, 15, 10, 6, 4];
+        this.winningAreaProbabilities = [35, 35, 12, 8, 6, 4];
         // this.winningAreaProbabilities = [100, 0, 0, 0, 0, 0];
 
         // 创建临时画布

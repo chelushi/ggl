@@ -14,16 +14,60 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             font-family: 'Microsoft YaHei', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 添加背景装饰 */
+        .background-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .background-decoration img {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .background-decoration img:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .background-decoration img:nth-child(2) {
+            top: 60%;
+            right: 5%;
+            animation-delay: 2s;
+        }
+
+        .background-decoration img:nth-child(3) {
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             max-width: 800px;
             width: 100%;
             text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         h1 {
@@ -31,17 +75,46 @@
             margin-bottom: 20px;
             font-size: 28px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before, h1::after {
+            content: '🎉';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        h1::before {
+            left: -40px;
+        }
+
+        h1::after {
+            right: -40px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
         }
 
         .game-area {
             margin: 20px 0;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
         }
 
         #scratchCanvas {
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             background: white;
+            transition: opacity 0.5s ease-in-out;
         }
 
         .button-group {
@@ -61,6 +134,28 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         #newCard {
@@ -85,46 +180,45 @@
         .instructions {
             margin-top: 20px;
             padding: 15px;
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 8px;
             color: #666;
             font-size: 14px;
             line-height: 1.6;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .instructions p {
+            margin: 8px 0;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .footer {
             margin-top: 30px;
             color: #666;
             font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            position: relative;
         }
 
-        /* 添加动画效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .footer::before {
+            content: '🎯';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: rotate 3s linear infinite;
         }
 
-        .container {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* 添加响应式设计 */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-            }
+        @keyframes rotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
         }
 
         /* 添加动画相关样式 */
@@ -162,75 +256,36 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
 
-        /* 添加刮开效果过渡 */
-        #scratchCanvas {
-            transition: opacity 0.5s ease-in-out;
-        }
+        /* 添加响应式设计 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
 
-        /* 添加按钮点击效果 */
-        button:active {
-            transform: scale(0.95);
-        }
+            h1 {
+                font-size: 24px;
+            }
 
-        /* 添加游戏区域阴影效果 */
-        .game-area {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 15px;
-            overflow: hidden;
-        }
+            .button-group {
+                flex-direction: column;
+            }
 
-        /* 添加说明文字样式 */
-        .instructions {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .instructions p {
-            margin: 8px 0;
-            color: #495057;
-        }
-
-        /* 添加页脚样式 */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 14px;
-        }
-
-        /* 添加加载动画 */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .loading::after {
-            content: '';
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            button {
+                width: 100%;
+            }
         }
     </style>
     <!-- 引入微信JS-SDK -->
     <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
 </head>
 <body>
+    <!-- 添加背景装饰 -->
+    <div class="background-decoration">
+        <img src="images/decoration1.png" alt="装饰1">
+        <img src="images/decoration2.png" alt="装饰2">
+        <img src="images/decoration3.png" alt="装饰3">
+    </div>
+
     <div class="container">
         <h1>🎉 刮刮乐游戏 🎉</h1>
         <div class="game-area">
@@ -242,8 +297,8 @@
         </div>
         <div class="instructions">
             <p>🎮 游戏说明：</p>
-            <p>1. 刮开所有区域，寻找中奖图案</p>
-            <p>2. 找到中奖图案后继续刮开，查看奖品</p>
+            <p>1. 刮开所有区域，寻找中奖号码</p>
+            <p>2. 找到中奖号码后继续刮开，查看奖品</p>
             <p>3. 点击"新游戏"开始新的刮刮乐</p>
             <p>4. 点击"分享"将游戏分享给好友</p>
         </div>
