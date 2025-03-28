@@ -229,7 +229,7 @@ class ScratchCard {
         this.ctx.font = 'bold 24px Microsoft YaHei';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(`你好呀`, this.canvas.width / 2, 30);
+        this.ctx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
         
         // 生成所有可用号码（0-100，除去中奖号码）
         const availableNumbers = Array.from({length: 101}, (_, i) => i)
@@ -268,12 +268,13 @@ class ScratchCard {
         
         // 随机选择图片
         const selectedNormalImages = this.selectRandomUnique(this.normalImages, this.rows * this.cols - winningAreaCount);
-        const selectedRewardPattern = this.rewardPatternImages[Math.floor(Math.random() * this.rewardPatternImages.length)];
+        const selectedRewardPatterns = this.selectRandomUnique(this.rewardPatternImages, winningAreaCount);
         
         // 生成每个区域的数字和奖品
         this.cells = [];
         let availableIndex = 0;
         let normalImageIndex = 0;
+        let rewardPatternIndex = 0;
         
         for (let row = 0; row < this.rows; row++) {
             this.cells[row] = [];
@@ -285,7 +286,7 @@ class ScratchCard {
                     // 中奖区域：使用中奖号码和随机选择的中奖图片
                     number = this.winningNumber;
                     reward = this.selectReward();
-                    image = selectedRewardPattern;
+                    image = selectedRewardPatterns[rewardPatternIndex++];
                 } else {
                     // 非中奖区域：从可用号码中选择一个未使用的号码和随机选择的普通图片
                     number = availableNumbers[availableIndex++];
@@ -318,7 +319,7 @@ class ScratchCard {
         this.numberCtx.font = 'bold 24px Microsoft YaHei';
         this.numberCtx.textAlign = 'center';
         this.numberCtx.textBaseline = 'middle';
-        this.numberCtx.fillText(`你好呀！！！`, this.canvas.width / 2, 30);
+        this.numberCtx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
         
         // 在临时画布上绘制数字和图案
         for (let row = 0; row < this.rows; row++) {
