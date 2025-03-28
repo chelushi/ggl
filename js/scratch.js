@@ -11,6 +11,14 @@ class ScratchCard {
         this.cellHeight = 80;
         this.padding = 10;
         
+        // 添加动画相关属性
+        this.animationFrame = null;
+        this.scratchEffect = {
+            radius: 15,
+            lineWidth: 30,
+            opacity: 0.8
+        };
+        
         // 设置中奖号码
         this.winningNumbers = [3, 6, 8, 16, 20, 66, 88, 99];
         
@@ -27,7 +35,8 @@ class ScratchCard {
         
         // 设置中奖区域数量的概率
         this.winningAreaProbabilities = [35, 30, 15, 10, 6, 4];
-        
+        // this.winningAreaProbabilities = [100, 0, 0, 0, 0, 0];
+
         // 创建临时画布
         this.numberCanvas = document.createElement('canvas');
         this.numberCtx = this.numberCanvas.getContext('2d');
@@ -205,107 +214,110 @@ class ScratchCard {
     }
 
     generateNewCard() {
-        // 清空所有画布
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.numberCtx.clearRect(0, 0, this.numberCanvas.width, this.numberCanvas.height);
-        this.scratchCtx.clearRect(0, 0, this.scratchCanvas.width, this.scratchCanvas.height);
-        this.rewardCtx.clearRect(0, 0, this.rewardCanvas.width, this.rewardCanvas.height);
+        // 添加淡出效果
+        this.canvas.style.opacity = '0';
         
-        // 绘制背景
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.numberCtx.fillStyle = '#ffffff';
-        this.numberCtx.fillRect(0, 0, this.numberCanvas.width, this.numberCanvas.height);
-        this.scratchCtx.fillStyle = '#ffffff';
-        this.scratchCtx.fillRect(0, 0, this.scratchCanvas.width, this.scratchCanvas.height);
-        this.rewardCtx.fillStyle = '#ffffff';
-        this.rewardCtx.fillRect(0, 0, this.rewardCanvas.width, this.rewardCanvas.height);
-        
-        // 生成中奖号码（从8个号码中随机选择一个）
-        this.winningNumber = this.winningNumbers[Math.floor(Math.random() * this.winningNumbers.length)];
-        
-        // 绘制中奖号码
-        this.ctx.fillStyle = '#000000';
-        this.ctx.font = 'bold 24px Microsoft YaHei';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
-        
-        // 生成所有可用号码（0-100，除去中奖号码）
-        const availableNumbers = Array.from({length: 101}, (_, i) => i)
-            .filter(num => num !== this.winningNumber);
-        
-        // 随机打乱可用号码
-        for (let i = availableNumbers.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [availableNumbers[i], availableNumbers[j]] = [availableNumbers[j], availableNumbers[i]];
-        }
-        
-        // 根据概率决定中奖区域数量（0-5个）
-        const random = Math.random() * 100;
-        let sum = 0;
-        let winningAreaCount = 0;
-        
-        // 计算概率总和
-        for (let i = 0; i < this.winningAreaProbabilities.length; i++) {
-            sum += this.winningAreaProbabilities[i];
-            if (random < sum) {
-                winningAreaCount = i;
-                break;
+        setTimeout(() => {
+            // 清空所有画布
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.numberCtx.clearRect(0, 0, this.numberCanvas.width, this.numberCanvas.height);
+            this.scratchCtx.clearRect(0, 0, this.scratchCanvas.width, this.scratchCanvas.height);
+            this.rewardCtx.clearRect(0, 0, this.rewardCanvas.width, this.rewardCanvas.height);
+            
+            // 绘制背景
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.numberCtx.fillStyle = '#ffffff';
+            this.numberCtx.fillRect(0, 0, this.numberCanvas.width, this.numberCanvas.height);
+            this.scratchCtx.fillStyle = '#ffffff';
+            this.scratchCtx.fillRect(0, 0, this.scratchCanvas.width, this.scratchCanvas.height);
+            this.rewardCtx.fillStyle = '#ffffff';
+            this.rewardCtx.fillRect(0, 0, this.rewardCanvas.width, this.rewardCanvas.height);
+            
+            // 生成中奖号码（从8个号码中随机选择一个）
+            this.winningNumber = this.winningNumbers[Math.floor(Math.random() * this.winningNumbers.length)];
+            
+            // 绘制中奖号码
+            this.ctx.fillStyle = '#000000';
+            this.ctx.font = 'bold 24px Microsoft YaHei';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
+            
+            // 生成所有可用号码（0-100，除去中奖号码）
+            const availableNumbers = Array.from({length: 101}, (_, i) => i)
+                .filter(num => num !== this.winningNumber);
+            
+            // 随机打乱可用号码
+            for (let i = availableNumbers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableNumbers[i], availableNumbers[j]] = [availableNumbers[j], availableNumbers[i]];
             }
-        }
-        
-        // 确保至少有一个中奖区域
-        if (winningAreaCount === 0) {
-            winningAreaCount = 1;
-        }
-        
-        // 生成中奖区域索引
-        const winningAreaIndices = new Set();
-        while (winningAreaIndices.size < winningAreaCount) {
-            winningAreaIndices.add(Math.floor(Math.random() * (this.rows * this.cols)));
-        }
-        
-        // 随机选择图片
-        const selectedNormalImages = this.selectRandomUnique(this.normalImages, this.rows * this.cols - winningAreaCount);
-        const selectedRewardPatterns = this.selectRandomUnique(this.rewardPatternImages, winningAreaCount);
-        
-        // 生成每个区域的数字和奖品
-        this.cells = [];
-        let availableIndex = 0;
-        let normalImageIndex = 0;
-        let rewardPatternIndex = 0;
-        
-        for (let row = 0; row < this.rows; row++) {
-            this.cells[row] = [];
-            for (let col = 0; col < this.cols; col++) {
-                const areaIndex = row * this.cols + col;
-                let number, reward, image;
-                
-                if (winningAreaIndices.has(areaIndex)) {
-                    // 中奖区域：使用中奖号码和随机选择的中奖图片
-                    number = this.winningNumber;
-                    reward = this.selectReward();
-                    image = selectedRewardPatterns[rewardPatternIndex++];
-                } else {
-                    // 非中奖区域：从可用号码中选择一个未使用的号码和随机选择的普通图片
-                    number = availableNumbers[availableIndex++];
-                    reward = null;
-                    image = selectedNormalImages[normalImageIndex++];
+            
+            // 根据概率决定中奖区域数量（0-5个）
+            const random = Math.random() * 100;
+            let sum = 0;
+            let winningAreaCount = 0;
+            
+            // 计算概率总和
+            for (let i = 0; i < this.winningAreaProbabilities.length; i++) {
+                sum += this.winningAreaProbabilities[i];
+                if (random < sum) {
+                    winningAreaCount = i;
+                    break;
                 }
-                
-                this.cells[row][col] = {
-                    number: number,
-                    reward: reward,
-                    image: image,
-                    isScratched: false,
-                    scratchedArea: 0
-                };
             }
-        }
-        
-        // 绘制所有区域
-        this.drawAllCells();
+            
+            // 生成中奖区域索引
+            const winningAreaIndices = new Set();
+            while (winningAreaIndices.size < winningAreaCount) {
+                winningAreaIndices.add(Math.floor(Math.random() * (this.rows * this.cols)));
+            }
+            
+            // 随机选择图片
+            const selectedNormalImages = this.selectRandomUnique(this.normalImages, this.rows * this.cols - winningAreaCount);
+            const selectedRewardPatterns = this.selectRandomUnique(this.rewardPatternImages, winningAreaCount);
+            
+            // 生成每个区域的数字和奖品
+            this.cells = [];
+            let availableIndex = 0;
+            let normalImageIndex = 0;
+            let rewardPatternIndex = 0;
+            
+            for (let row = 0; row < this.rows; row++) {
+                this.cells[row] = [];
+                for (let col = 0; col < this.cols; col++) {
+                    const areaIndex = row * this.cols + col;
+                    let number, reward, image;
+                    
+                    if (winningAreaIndices.has(areaIndex)) {
+                        // 中奖区域：使用中奖号码和随机选择的中奖图片
+                        number = this.winningNumber;
+                        reward = this.selectReward();
+                        image = selectedRewardPatterns[rewardPatternIndex++];
+                    } else {
+                        // 非中奖区域：从可用号码中选择一个未使用的号码和随机选择的普通图片
+                        number = availableNumbers[availableIndex++];
+                        reward = null;
+                        image = selectedNormalImages[normalImageIndex++];
+                    }
+                    
+                    this.cells[row][col] = {
+                        number: number,
+                        reward: reward,
+                        image: image,
+                        isScratched: false,
+                        scratchedArea: 0
+                    };
+                }
+            }
+            
+            // 绘制所有区域
+            this.drawAllCells();
+            
+            // 添加淡入效果
+            this.canvas.style.opacity = '1';
+        }, 500);
     }
 
     drawAllCells() {
@@ -475,15 +487,43 @@ class ScratchCard {
         this.isDrawing = false;
     }
 
+    // 添加动画效果
+    animateScratch(x, y) {
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+
+        const animate = () => {
+            this.scratchEffect.radius += 0.5;
+            this.scratchEffect.opacity -= 0.02;
+
+            if (this.scratchEffect.opacity > 0) {
+                this.scratchCtx.globalCompositeOperation = 'destination-out';
+                this.scratchCtx.beginPath();
+                this.scratchCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
+                this.scratchCtx.fill();
+                this.scratchCtx.globalCompositeOperation = 'source-over';
+                this.updateMainCanvas();
+                this.animationFrame = requestAnimationFrame(animate);
+            }
+        };
+
+        animate();
+    }
+
+    // 修改刮开方法，添加动画效果
     scratch(x, y) {
         const cell = this.getCellAtPosition(x, y);
         if (cell) {
+            // 添加刮开动画效果
+            this.animateScratch(x, y);
+            
             // 检查是否在中奖区域
             if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
                 // 先刮开主刮开层
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
                 this.scratchCtx.beginPath();
-                this.scratchCtx.arc(x, y, 15, 0, Math.PI * 2);
+                this.scratchCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
                 this.scratchCtx.fill();
                 this.scratchCtx.globalCompositeOperation = 'source-over';
                 
@@ -506,15 +546,18 @@ class ScratchCard {
                 if (this.cells[cell.row][cell.col].scratchedArea >= 0.8) {
                     this.rewardCtx.globalCompositeOperation = 'destination-out';
                     this.rewardCtx.beginPath();
-                    this.rewardCtx.arc(x, y, 15, 0, Math.PI * 2);
+                    this.rewardCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
                     this.rewardCtx.fill();
                     this.rewardCtx.globalCompositeOperation = 'source-over';
+                    
+                    // 添加中奖效果
+                    this.showWinningEffect(cell.row, cell.col);
                 }
             } else {
                 // 非中奖区域或中奖号码区域：正常刮开
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
                 this.scratchCtx.beginPath();
-                this.scratchCtx.arc(x, y, 15, 0, Math.PI * 2);
+                this.scratchCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
                 this.scratchCtx.fill();
                 this.scratchCtx.globalCompositeOperation = 'source-over';
                 
@@ -617,6 +660,36 @@ class ScratchCard {
         }
     }
 
+    // 添加中奖效果
+    showWinningEffect(row, col) {
+        const x = col * this.cellWidth + (col + 1) * this.padding + this.cellWidth / 2;
+        const y = row * this.cellHeight + (row + 1) * this.padding + 60 + this.cellHeight / 2;
+        
+        // 创建粒子效果
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            document.body.appendChild(particle);
+            
+            // 添加动画
+            const angle = (Math.PI * 2 * i) / 20;
+            const velocity = 5;
+            const animation = particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${Math.cos(angle) * 100}px, ${Math.sin(angle) * 100}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+    }
+
+    // 修改分享方法，添加分享成功效果
     shareToWeChat() {
         // 配置微信分享参数
         wx.ready(function() {
@@ -625,9 +698,17 @@ class ScratchCard {
                 title: '来玩刮刮乐！',
                 desc: '试试你的运气，看看能刮出什么大奖！',
                 link: window.location.href,
-                imgUrl: 'https://your-domain.com/share-image.jpg', // 替换为你的分享图片URL
+                imgUrl: 'https://your-domain.com/share-image.jpg',
                 success: function() {
-                    alert('分享成功！');
+                    // 添加分享成功效果
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'success-message';
+                    successMessage.textContent = '分享成功！🎉';
+                    document.body.appendChild(successMessage);
+                    
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 2000);
                 },
                 fail: function(res) {
                     console.error('分享失败', res);
@@ -640,9 +721,17 @@ class ScratchCard {
                 title: '来玩刮刮乐！',
                 desc: '试试你的运气，看看能刮出什么大奖！',
                 link: window.location.href,
-                imgUrl: 'https://your-domain.com/share-image.jpg', // 替换为你的分享图片URL
+                imgUrl: 'https://your-domain.com/share-image.jpg',
                 success: function() {
-                    alert('分享成功！');
+                    // 添加分享成功效果
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'success-message';
+                    successMessage.textContent = '分享成功！🎉';
+                    document.body.appendChild(successMessage);
+                    
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 2000);
                 },
                 fail: function(res) {
                     console.error('分享失败', res);
