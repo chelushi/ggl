@@ -58,10 +58,6 @@ class ScratchCard {
     // 加载图案图片
     loadPatternImages() {
         // 定义图案图片路径数组
-        const patternPaths = [
-            'images/pattern1.png',  // 主刮开层图案
-        ];
-
         const rewardPatternPaths = [
             'images/reward_pattern1.png',  // 奖品刮开层图案1
             'images/reward_pattern2.jpg',  // 奖品刮开层图案2
@@ -95,28 +91,7 @@ class ScratchCard {
         ];
 
         let loadedImages = 0;
-        const totalImages = patternPaths.length + rewardPatternPaths.length + normalImagePaths.length;
-
-        // 加载主刮开层图案
-        patternPaths.forEach((path, index) => {
-            const img = new Image();
-            img.onload = () => {
-                this.patternImages[index] = img;
-                loadedImages++;
-                
-                if (loadedImages === totalImages) {
-                    this.init();
-                }
-            };
-            img.onerror = () => {
-                console.error(`Failed to load pattern image: ${path}`);
-                loadedImages++;
-                if (loadedImages === totalImages) {
-                    this.init();
-                }
-            };
-            img.src = path;
-        });
+        const totalImages = rewardPatternPaths.length + normalImagePaths.length;
 
         // 加载奖品刮开层图案
         rewardPatternPaths.forEach((path, index) => {
@@ -352,12 +327,58 @@ class ScratchCard {
                 if (cell.number === this.winningNumber) {
                     // 中奖区域：绘制中奖图片
                     if (cell.image) {
-                        this.numberCtx.drawImage(cell.image, x, y, this.cellWidth, this.cellHeight);
+                        // 计算图片缩放比例
+                        const scaleX = this.cellWidth / cell.image.width;
+                        const scaleY = this.cellHeight / cell.image.height;
+                        const scale = Math.max(scaleX, scaleY);
+                        
+                        // 计算缩放后的图片尺寸
+                        const scaledWidth = cell.image.width * scale;
+                        const scaledHeight = cell.image.height * scale;
+                        
+                        // 计算居中偏移
+                        const offsetX = (scaledWidth - this.cellWidth) / 2;
+                        const offsetY = (scaledHeight - this.cellHeight) / 2;
+                        
+                        // 创建临时画布用于裁剪
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = this.cellWidth;
+                        tempCanvas.height = this.cellHeight;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        
+                        // 在临时画布上绘制缩放后的图片
+                        tempCtx.drawImage(cell.image, -offsetX, -offsetY, scaledWidth, scaledHeight);
+                        
+                        // 将裁剪后的图片绘制到目标位置
+                        this.numberCtx.drawImage(tempCanvas, x, y);
                     }
                     
                     // 绘制奖品刮开层
                     if (cell.image) {
-                        this.rewardCtx.drawImage(cell.image, x, y, this.cellWidth, this.cellHeight);
+                        // 计算图片缩放比例
+                        const scaleX = this.cellWidth / cell.image.width;
+                        const scaleY = this.cellHeight / cell.image.height;
+                        const scale = Math.max(scaleX, scaleY);
+                        
+                        // 计算缩放后的图片尺寸
+                        const scaledWidth = cell.image.width * scale;
+                        const scaledHeight = cell.image.height * scale;
+                        
+                        // 计算居中偏移
+                        const offsetX = (scaledWidth - this.cellWidth) / 2;
+                        const offsetY = (scaledHeight - this.cellHeight) / 2;
+                        
+                        // 创建临时画布用于裁剪
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = this.cellWidth;
+                        tempCanvas.height = this.cellHeight;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        
+                        // 在临时画布上绘制缩放后的图片
+                        tempCtx.drawImage(cell.image, -offsetX, -offsetY, scaledWidth, scaledHeight);
+                        
+                        // 将裁剪后的图片绘制到目标位置
+                        this.rewardCtx.drawImage(tempCanvas, x, y);
                     }
                     
                     // 绘制奖品文字（在数字层，被刮开层覆盖）
@@ -369,27 +390,62 @@ class ScratchCard {
                 } else {
                     // 非中奖区域：绘制普通图片
                     if (cell.image) {
-                        this.numberCtx.drawImage(cell.image, x, y, this.cellWidth, this.cellHeight);
+                        // 计算图片缩放比例
+                        const scaleX = this.cellWidth / cell.image.width;
+                        const scaleY = this.cellHeight / cell.image.height;
+                        const scale = Math.max(scaleX, scaleY);
+                        
+                        // 计算缩放后的图片尺寸
+                        const scaledWidth = cell.image.width * scale;
+                        const scaledHeight = cell.image.height * scale;
+                        
+                        // 计算居中偏移
+                        const offsetX = (scaledWidth - this.cellWidth) / 2;
+                        const offsetY = (scaledHeight - this.cellHeight) / 2;
+                        
+                        // 创建临时画布用于裁剪
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = this.cellWidth;
+                        tempCanvas.height = this.cellHeight;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        
+                        // 在临时画布上绘制缩放后的图片
+                        tempCtx.drawImage(cell.image, -offsetX, -offsetY, scaledWidth, scaledHeight);
+                        
+                        // 将裁剪后的图片绘制到目标位置
+                        this.numberCtx.drawImage(tempCanvas, x, y);
                     }
                 }
             }
         }
         
-        // 绘制整个刮刮层（使用一张大图）
-        const pattern = this.patternImages[0];
-        if (pattern) {
+        // 随机选择一张图片作为刮刮层封面
+        const allImages = [...this.normalImages, ...this.rewardPatternImages];
+        const randomIndex = Math.floor(Math.random() * allImages.length);
+        const coverImage = allImages[randomIndex];
+        
+        if (coverImage) {
             // 创建图案
             const patternCanvas = document.createElement('canvas');
             patternCanvas.width = this.canvas.width;
             patternCanvas.height = this.canvas.height;
             const patternCtx = patternCanvas.getContext('2d');
             
-            // 绘制图片并平铺
-            for (let i = 0; i < this.canvas.width; i += pattern.width) {
-                for (let j = 0; j < this.canvas.height; j += pattern.height) {
-                    patternCtx.drawImage(pattern, i, j);
-                }
-            }
+            // 计算图片缩放比例
+            const scaleX = this.canvas.width / coverImage.width;
+            const scaleY = this.canvas.height / coverImage.height;
+            const scale = Math.max(scaleX, scaleY);
+            
+            // 计算缩放后的图片尺寸
+            const scaledWidth = coverImage.width * scale;
+            const scaledHeight = coverImage.height * scale;
+            
+            // 计算居中偏移
+            const offsetX = (scaledWidth - this.canvas.width) / 2;
+            const offsetY = (scaledHeight - this.canvas.height) / 2;
+            
+            // 绘制缩放后的图片
+            patternCtx.drawImage(coverImage, -offsetX, -offsetY, scaledWidth, scaledHeight);
             
             // 将图案应用到刮刮层
             this.scratchCtx.drawImage(patternCanvas, 0, 0);
@@ -511,7 +567,54 @@ class ScratchCard {
         animate();
     }
 
-    // 修改刮开方法，添加动画效果
+    // 添加自动刮开方法
+    autoScratchArea(row, col) {
+        const x = col * this.cellWidth + (col + 1) * this.padding;
+        const y = row * this.cellHeight + (row + 1) * this.padding + 60;
+        
+        // 创建临时画布用于计算刮开区域
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = this.cellWidth;
+        tempCanvas.height = this.cellHeight;
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        // 复制当前区域的刮开状态
+        tempCtx.drawImage(this.scratchCanvas, x, y, this.cellWidth, this.cellHeight, 0, 0, this.cellWidth, this.cellHeight);
+        
+        // 获取区域数据
+        const cellData = tempCtx.getImageData(0, 0, this.cellWidth, this.cellHeight);
+        
+        // 计算未刮开的像素
+        let unscratchedPixels = 0;
+        for (let i = 3; i < cellData.data.length; i += 4) {
+            if (cellData.data[i] > 0) unscratchedPixels++;
+        }
+        
+        // 如果未刮开区域小于15%，则自动刮开剩余部分
+        if (unscratchedPixels / (this.cellWidth * this.cellHeight) < 0.15) {
+            // 完全刮开该区域
+            this.scratchCtx.globalCompositeOperation = 'destination-out';
+            this.scratchCtx.fillRect(x, y, this.cellWidth, this.cellHeight);
+            this.scratchCtx.globalCompositeOperation = 'source-over';
+            
+            // 更新刮开区域
+            this.cells[row][col].scratchedArea = 1;
+            
+            // 如果是中奖区域，同时刮开奖品层
+            if (this.cells[row][col].number === this.winningNumber) {
+                this.rewardCtx.globalCompositeOperation = 'destination-out';
+                this.rewardCtx.fillRect(x, y, this.cellWidth, this.cellHeight);
+                this.rewardCtx.globalCompositeOperation = 'source-over';
+                
+                // 添加中奖效果
+                this.showWinningEffect(row, col);
+            }
+            
+            this.updateMainCanvas();
+        }
+    }
+
+    // 修改scratch方法，添加自动刮开检查
     scratch(x, y) {
         const cell = this.getCellAtPosition(x, y);
         if (cell) {
@@ -576,6 +679,9 @@ class ScratchCard {
                     }
                     
                     this.cells[cell.row][cell.col].scratchedArea = scratchedPixels / (this.cellWidth * this.cellHeight);
+                    
+                    // 检查是否需要自动刮开
+                    this.autoScratchArea(cell.row, cell.col);
                 }
             }
             
@@ -583,6 +689,7 @@ class ScratchCard {
         }
     }
 
+    // 修改scratchLine方法，添加自动刮开检查
     scratchLine(fromX, fromY, toX, toY) {
         const cell = this.getCellAtPosition(fromX, fromY);
         if (cell) {
@@ -653,6 +760,9 @@ class ScratchCard {
                     }
                     
                     this.cells[cell.row][cell.col].scratchedArea = scratchedPixels / (this.cellWidth * this.cellHeight);
+                    
+                    // 检查是否需要自动刮开
+                    this.autoScratchArea(cell.row, cell.col);
                 }
             }
             
