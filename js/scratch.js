@@ -71,7 +71,10 @@ class ScratchCard {
             'images/reward_pattern2.jpg',  // 奖品刮开层图案2
             'images/reward_pattern3.jpg',  // 奖品刮开层图案3
             'images/reward_pattern4.jpg',  // 奖品刮开层图案4
-            'images/reward_pattern5.jpg'   // 奖品刮开层图案5
+            'images/reward_pattern5.jpg',  // 奖品刮开层图案5
+            'images/reward_pattern6.jpg',  // 奖品刮开层图案6
+            'images/reward_pattern7.jpg',  // 奖品刮开层图案7
+            'images/reward_pattern8.jpg'   // 奖品刮开层图案8        
         ];
 
         // 定义普通图片路径数组（至少20张）
