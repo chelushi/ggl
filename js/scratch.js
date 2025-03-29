@@ -57,6 +57,10 @@ class ScratchCard {
         // 修改画布尺寸，为右侧区域留出空间
         this.rightAreaWidth = 100; // 右侧区域宽度
         this.canvas.width = this.cols * this.cellWidth + (this.cols + 1) * this.padding + this.rightAreaWidth;
+
+        // 添加右侧区域刮开状态
+        this.rightAreaScratched = false;
+        this.rightAreaScratchedArea = 0;
     }
 
     // 加载图案图片
@@ -650,7 +654,26 @@ class ScratchCard {
         }
     }
 
-    // 修改scratch方法，添加自动刮开检查
+    // 添加检查右侧区域刮开状态的方法
+    checkRightAreaScratched() {
+        const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
+        const cellData = this.scratchCtx.getImageData(
+            rightAreaX,
+            60,
+            this.rightAreaWidth,
+            this.canvas.height - 60
+        );
+        
+        let scratchedPixels = 0;
+        for (let i = 3; i < cellData.data.length; i += 4) {
+            if (cellData.data[i] === 0) scratchedPixels++;
+        }
+        
+        this.rightAreaScratchedArea = scratchedPixels / (this.rightAreaWidth * (this.canvas.height - 60));
+        this.rightAreaScratched = this.rightAreaScratchedArea >= 0.8; // 当刮开面积超过80%时认为完全刮开
+    }
+
+    // 修改scratch方法
     scratch(x, y) {
         const cell = this.getCellAtPosition(x, y);
         if (cell) {
@@ -665,6 +688,9 @@ class ScratchCard {
                 this.scratchCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
                 this.scratchCtx.fill();
                 this.scratchCtx.globalCompositeOperation = 'source-over';
+                
+                // 检查右侧区域刮开状态
+                this.checkRightAreaScratched();
             } else if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
                 // 先刮开主刮开层
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
@@ -688,8 +714,8 @@ class ScratchCard {
                 
                 this.cells[cell.row][cell.col].scratchedArea = scratchedPixels / (this.cellWidth * this.cellHeight);
                 
-                // 如果主刮开层刮开足够多，开始刮开奖品刮开层
-                if (this.cells[cell.row][cell.col].scratchedArea >= 0.8) {
+                // 只有当右侧区域完全刮开后，才能刮开奖品刮开层
+                if (this.rightAreaScratched && this.cells[cell.row][cell.col].scratchedArea >= 0.8) {
                     this.rewardCtx.globalCompositeOperation = 'destination-out';
                     this.rewardCtx.beginPath();
                     this.rewardCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
@@ -698,6 +724,9 @@ class ScratchCard {
                     
                     // 添加中奖效果
                     this.showWinningEffect(cell.row, cell.col);
+                } else if (!this.rightAreaScratched) {
+                    // 如果右侧区域未完全刮开，显示提示信息
+                    this.showMessage('请先刮开右侧区域查看中奖个数！');
                 }
             } else {
                 // 非中奖区域或中奖号码区域：正常刮开
@@ -732,7 +761,7 @@ class ScratchCard {
         }
     }
 
-    // 修改scratchLine方法，添加自动刮开检查
+    // 修改scratchLine方法
     scratchLine(fromX, fromY, toX, toY) {
         const cell = this.getCellAtPosition(fromX, fromY);
         if (cell) {
@@ -748,6 +777,9 @@ class ScratchCard {
                 this.scratchCtx.lineJoin = 'round';
                 this.scratchCtx.stroke();
                 this.scratchCtx.globalCompositeOperation = 'source-over';
+                
+                // 检查右侧区域刮开状态
+                this.checkRightAreaScratched();
             } else if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
                 // 先刮开主刮开层
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
@@ -775,8 +807,8 @@ class ScratchCard {
                 
                 this.cells[cell.row][cell.col].scratchedArea = scratchedPixels / (this.cellWidth * this.cellHeight);
                 
-                // 如果主刮开层刮开足够多，开始刮开奖品刮开层
-                if (this.cells[cell.row][cell.col].scratchedArea >= 0.8) {
+                // 只有当右侧区域完全刮开后，才能刮开奖品刮开层
+                if (this.rightAreaScratched && this.cells[cell.row][cell.col].scratchedArea >= 0.8) {
                     this.rewardCtx.globalCompositeOperation = 'destination-out';
                     this.rewardCtx.beginPath();
                     this.rewardCtx.moveTo(fromX, fromY);
@@ -786,6 +818,9 @@ class ScratchCard {
                     this.rewardCtx.lineJoin = 'round';
                     this.rewardCtx.stroke();
                     this.rewardCtx.globalCompositeOperation = 'source-over';
+                } else if (!this.rightAreaScratched) {
+                    // 如果右侧区域未完全刮开，显示提示信息
+                    this.showMessage('请先刮开右侧区域查看中奖个数！');
                 }
             } else {
                 // 非中奖区域或中奖号码区域：正常刮开
@@ -992,6 +1027,18 @@ class ScratchCard {
             }
         }
         return count;
+    }
+
+    // 添加显示提示信息的方法
+    showMessage(text) {
+        const message = document.createElement('div');
+        message.className = 'message';
+        message.textContent = text;
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+            message.remove();
+        }, 2000);
     }
 }
 
