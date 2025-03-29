@@ -311,10 +311,10 @@ class ScratchCard {
         
         // 绘制中奖号码（在数字层）
         this.numberCtx.fillStyle = '#000000';
-        this.numberCtx.font = 'bold 24px Microsoft YaHei';
+        this.numberCtx.font = 'bold 28px Microsoft YaHei';
         this.numberCtx.textAlign = 'center';
         this.numberCtx.textBaseline = 'middle';
-        this.numberCtx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
+        this.numberCtx.fillText(`点开 抽我`, this.canvas.width / 2, 30);
         
         // 绘制右侧区域背景
         const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
@@ -326,7 +326,7 @@ class ScratchCard {
         this.numberCtx.strokeRect(rightAreaX, 60, this.rightAreaWidth, this.canvas.height - 60);
         
         // 在右侧区域居中绘制文字
-        const text = `中奖个数：${this.getWinningCount()}`;
+        const text = `中了 ${this.getWinningCount()}个`;
         const charHeight = 30; // 每个字符的高度
         const totalHeight = text.length * charHeight; // 文字总高度
         const startY = 60 + (this.canvas.height - 60 - totalHeight) / 2; // 计算起始Y坐标，使文字垂直居中
