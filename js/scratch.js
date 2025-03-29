@@ -67,21 +67,22 @@ class ScratchCard {
     loadPatternImages() {
         // 定义图案图片路径数组
         const rewardPatternPaths = [
-            'images/reward_pattern1.png',  // 奖品刮开层图案1
+            'images/reward_pattern1.jpg',  // 奖品刮开层图案1
             'images/reward_pattern2.jpg',  // 奖品刮开层图案2
             'images/reward_pattern3.jpg',  // 奖品刮开层图案3
             'images/reward_pattern4.jpg',  // 奖品刮开层图案4
             'images/reward_pattern5.jpg',  // 奖品刮开层图案5
             'images/reward_pattern6.jpg',  // 奖品刮开层图案6
             'images/reward_pattern7.jpg',  // 奖品刮开层图案7
-            'images/reward_pattern8.jpg'   // 奖品刮开层图案8        
+            'images/reward_pattern8.jpg',  // 奖品刮开层图案8
+            'images/reward_pattern9.jpg',  // 奖品刮开层图案9
         ];
 
         // 定义普通图片路径数组（至少20张）
         const normalImagePaths = [
             'images/normal1.png',
             'images/normal2.png',
-            'images/normal3.jpg',
+            'images/normal3.png',
             'images/normal4.jpg',
             'images/normal5.jpg',
             'images/normal6.jpg',
