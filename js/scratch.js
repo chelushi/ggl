@@ -741,7 +741,7 @@ class ScratchCard {
                     this.showWinningEffect(cell.row, cell.col);
                 } else if (!this.rightAreaScratched) {
                     // 如果右侧区域未完全刮开，显示提示信息
-                    this.showMessage('请先刮开右侧区域查看中奖个数！');
+                    // this.showMessage('请先刮开右侧区域查看中奖个数！');
                 }
             } else {
                 // 非中奖区域或中奖号码区域：正常刮开
@@ -835,7 +835,7 @@ class ScratchCard {
                     this.rewardCtx.globalCompositeOperation = 'source-over';
                 } else if (!this.rightAreaScratched) {
                     // 如果右侧区域未完全刮开，显示提示信息
-                    this.showMessage('请先刮开右侧区域查看中奖个数！');
+                    // this.showMessage('请先刮开右侧区域查看中奖个数！');
                 }
             } else {
                 // 非中奖区域或中奖号码区域：正常刮开
