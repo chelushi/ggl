@@ -318,7 +318,7 @@ class ScratchCard {
         
         // 绘制右侧区域背景
         const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
-        this.numberCtx.fillStyle = '#f0f0f0';
+        this.numberCtx.fillStyle = '#ffffff';
         this.numberCtx.fillRect(rightAreaX, 60, this.rightAreaWidth, this.canvas.height - 60);
         
         // 绘制右侧区域边框
@@ -654,7 +654,7 @@ class ScratchCard {
         }
     }
 
-    // 添加检查右侧区域刮开状态的方法
+    // 修改检查右侧区域刮开状态的方法
     checkRightAreaScratched() {
         const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
         const cellData = this.scratchCtx.getImageData(
@@ -670,7 +670,22 @@ class ScratchCard {
         }
         
         this.rightAreaScratchedArea = scratchedPixels / (this.rightAreaWidth * (this.canvas.height - 60));
-        this.rightAreaScratched = this.rightAreaScratchedArea >= 0.8; // 当刮开面积超过80%时认为完全刮开
+        this.rightAreaScratched = this.rightAreaScratchedArea >= 0.85; // 当刮开面积超过80%时认为完全刮开
+        
+        // 如果刮开面积超过80%，自动刮开剩余部分
+        if (this.rightAreaScratchedArea >= 0.85 && this.rightAreaScratchedArea < 1) {
+            // 完全刮开右侧区域
+            this.scratchCtx.globalCompositeOperation = 'destination-out';
+            this.scratchCtx.fillRect(rightAreaX, 60, this.rightAreaWidth, this.canvas.height - 60);
+            this.scratchCtx.globalCompositeOperation = 'source-over';
+            
+            // 更新刮开状态
+            this.rightAreaScratchedArea = 1;
+            this.rightAreaScratched = true;
+            
+            // 更新主画布
+            this.updateMainCanvas();
+        }
     }
 
     // 修改scratch方法
