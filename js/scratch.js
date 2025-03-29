@@ -95,7 +95,24 @@ class ScratchCard {
             'images/normal17.jpg',
             'images/normal18.jpg',
             'images/normal19.jpg',
-            'images/normal20.jpg'
+            'images/normal20.jpg',
+            'images/normal21.jpg',
+            'images/normal22.jpg',
+            'images/normal23.jpg',
+            'images/normal24.jpg',
+            'images/normal25.jpg',
+            'images/normal26.jpg',
+            'images/normal27.jpg',
+            'images/normal28.jpg',
+            'images/normal29.jpg',
+            'images/normal30.jpg',
+            'images/normal31.jpg',
+            'images/normal32.jpg',
+            'images/normal33.jpg',
+            'images/normal34.jpg',
+            'images/normal35.jpg',
+            'images/normal36.jpg',
+            'images/normal37.jpg'
         ];
 
         let loadedImages = 0;
