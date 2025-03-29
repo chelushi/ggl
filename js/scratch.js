@@ -53,6 +53,10 @@ class ScratchCard {
         this.rewardPatternImages = []; // 用于奖品刮开层的图案
         this.normalImages = []; // 用于非中奖区域的图片
         this.loadPatternImages();
+
+        // 修改画布尺寸，为右侧区域留出空间
+        this.rightAreaWidth = 100; // 右侧区域宽度
+        this.canvas.width = this.cols * this.cellWidth + (this.cols + 1) * this.padding + this.rightAreaWidth;
     }
 
     // 加载图案图片
@@ -159,7 +163,7 @@ class ScratchCard {
 
     setupCanvas() {
         // 设置画布大小以适应新的布局
-        this.canvas.width = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
+        this.canvas.width = this.cols * this.cellWidth + (this.cols + 1) * this.padding + this.rightAreaWidth;
         this.canvas.height = this.rows * this.cellHeight + (this.rows + 1) * this.padding + 60;
         
         // 设置临时画布大小
@@ -307,6 +311,32 @@ class ScratchCard {
         this.numberCtx.textAlign = 'center';
         this.numberCtx.textBaseline = 'middle';
         this.numberCtx.fillText(`你好呀！！！HwH`, this.canvas.width / 2, 30);
+        
+        // 绘制右侧区域背景
+        const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
+        this.numberCtx.fillStyle = '#f0f0f0';
+        this.numberCtx.fillRect(rightAreaX, 60, this.rightAreaWidth, this.canvas.height - 60);
+        
+        // 绘制右侧区域边框
+        this.numberCtx.strokeStyle = '#cccccc';
+        this.numberCtx.strokeRect(rightAreaX, 60, this.rightAreaWidth, this.canvas.height - 60);
+        
+        // 在右侧区域居中绘制文字
+        const text = `中奖个数：${this.getWinningCount()}`;
+        const charHeight = 30; // 每个字符的高度
+        const totalHeight = text.length * charHeight; // 文字总高度
+        const startY = 60 + (this.canvas.height - 60 - totalHeight) / 2; // 计算起始Y坐标，使文字垂直居中
+        
+        this.numberCtx.fillStyle = '#000000';
+        this.numberCtx.font = 'bold 24px Microsoft YaHei';
+        this.numberCtx.textAlign = 'center';
+        this.numberCtx.textBaseline = 'middle';
+        
+        // 从上往下绘制每个字符
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            this.numberCtx.fillText(char, rightAreaX + this.rightAreaWidth / 2, startY + i * charHeight);
+        }
         
         // 在临时画布上绘制数字和图案
         for (let row = 0; row < this.rows; row++) {
@@ -474,9 +504,15 @@ class ScratchCard {
     }
 
     getCellAtPosition(x, y) {
+        // 检查是否在右侧区域
+        const rightAreaX = this.cols * this.cellWidth + (this.cols + 1) * this.padding;
+        if (x >= rightAreaX && x <= rightAreaX + this.rightAreaWidth && y >= 60) {
+            return { row: -1, col: -1, isHeader: true, isRightArea: true };
+        }
+        
         // 检查是否在中奖号码区域
         if (y < 60) {
-            return { row: -1, col: -1, isHeader: true }; // 特殊标记中奖号码区域
+            return { row: -1, col: -1, isHeader: true };
         }
         
         // 调整y坐标，减去中奖号码区域的高度
@@ -621,8 +657,15 @@ class ScratchCard {
             // 添加刮开动画效果
             this.animateScratch(x, y);
             
-            // 检查是否在中奖区域
-            if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
+            // 检查是否在右侧区域
+            if (cell.isRightArea) {
+                // 刮开右侧区域
+                this.scratchCtx.globalCompositeOperation = 'destination-out';
+                this.scratchCtx.beginPath();
+                this.scratchCtx.arc(x, y, this.scratchEffect.radius, 0, Math.PI * 2);
+                this.scratchCtx.fill();
+                this.scratchCtx.globalCompositeOperation = 'source-over';
+            } else if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
                 // 先刮开主刮开层
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
                 this.scratchCtx.beginPath();
@@ -693,14 +736,25 @@ class ScratchCard {
     scratchLine(fromX, fromY, toX, toY) {
         const cell = this.getCellAtPosition(fromX, fromY);
         if (cell) {
-            // 检查是否在中奖区域
-            if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
+            // 检查是否在右侧区域
+            if (cell.isRightArea) {
+                // 刮开右侧区域
+                this.scratchCtx.globalCompositeOperation = 'destination-out';
+                this.scratchCtx.beginPath();
+                this.scratchCtx.moveTo(fromX, fromY);
+                this.scratchCtx.lineTo(toX, toY);
+                this.scratchCtx.lineWidth = this.scratchEffect.lineWidth;
+                this.scratchCtx.lineCap = 'round';
+                this.scratchCtx.lineJoin = 'round';
+                this.scratchCtx.stroke();
+                this.scratchCtx.globalCompositeOperation = 'source-over';
+            } else if (!cell.isHeader && this.cells[cell.row][cell.col].number === this.winningNumber) {
                 // 先刮开主刮开层
                 this.scratchCtx.globalCompositeOperation = 'destination-out';
                 this.scratchCtx.beginPath();
                 this.scratchCtx.moveTo(fromX, fromY);
                 this.scratchCtx.lineTo(toX, toY);
-                this.scratchCtx.lineWidth = 30;
+                this.scratchCtx.lineWidth = this.scratchEffect.lineWidth;
                 this.scratchCtx.lineCap = 'round';
                 this.scratchCtx.lineJoin = 'round';
                 this.scratchCtx.stroke();
@@ -727,7 +781,7 @@ class ScratchCard {
                     this.rewardCtx.beginPath();
                     this.rewardCtx.moveTo(fromX, fromY);
                     this.rewardCtx.lineTo(toX, toY);
-                    this.rewardCtx.lineWidth = 30;
+                    this.rewardCtx.lineWidth = this.scratchEffect.lineWidth;
                     this.rewardCtx.lineCap = 'round';
                     this.rewardCtx.lineJoin = 'round';
                     this.rewardCtx.stroke();
@@ -739,7 +793,7 @@ class ScratchCard {
                 this.scratchCtx.beginPath();
                 this.scratchCtx.moveTo(fromX, fromY);
                 this.scratchCtx.lineTo(toX, toY);
-                this.scratchCtx.lineWidth = 30;
+                this.scratchCtx.lineWidth = this.scratchEffect.lineWidth;
                 this.scratchCtx.lineCap = 'round';
                 this.scratchCtx.lineJoin = 'round';
                 this.scratchCtx.stroke();
@@ -925,6 +979,19 @@ class ScratchCard {
         
         // 如果随机数大于所有概率之和，返回最后一个奖励
         return this.rewards[this.rewards.length - 1];
+    }
+
+    // 添加获取中奖区域个数的方法
+    getWinningCount() {
+        let count = 0;
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                if (this.cells[row][col].number === this.winningNumber) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }
 
