@@ -24,17 +24,23 @@ class ScratchCard {
         
         // 设置奖励文字
         this.rewards = [
-            '奶茶！',
-            '冰！！',
-            '蛋糕！',
-            '糖葫芦'
+            '冰淇淋红茶',
+            '浮生半日闲',
+            '莓莓奶绿',
+            '鸭屎香柠檬茶',
+            '古茗杨枝甘露',
+            '海盐芝士芒果',
+            '海盐芝士芋圆',
+            '鲜芋仙芋圆三号',
+            '海盐芝士青提',
+            '大叔奶茶'
         ];
         
         // 设置奖励概率
-        this.rewardProbabilities = [40, 25, 10, 25];
+        this.rewardProbabilities = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         
         // 设置中奖区域数量的概率
-        this.winningAreaProbabilities = [35, 35, 12, 8, 6, 4];
+        this.winningAreaProbabilities = [0, 100, 0, 0, 0, 0];
         // this.winningAreaProbabilities = [100, 0, 0, 0, 0, 0];
 
         // 创建临时画布
@@ -64,18 +70,16 @@ class ScratchCard {
     }
 
     // 加载图案图片
-    loadPatternImages() {
+    loadPatternImages() { 
         // 定义图案图片路径数组
         const rewardPatternPaths = [
-            'images/reward_pattern1.jpg',  // 奖品刮开层图案1
-            'images/reward_pattern2.jpg',  // 奖品刮开层图案2
-            'images/reward_pattern3.jpg',  // 奖品刮开层图案3
-            'images/reward_pattern4.jpg',  // 奖品刮开层图案4
-            'images/reward_pattern5.jpg',  // 奖品刮开层图案5
-            'images/reward_pattern6.jpg',  // 奖品刮开层图案6
-            'images/reward_pattern7.jpg',  // 奖品刮开层图案7
-            'images/reward_pattern8.jpg',  // 奖品刮开层图案8
-            'images/reward_pattern9.jpg',  // 奖品刮开层图案9
+            'images/reward_pattern11.jpg',  // 奖品刮开层图案11
+            'images/reward_pattern12.jpg',  // 奖品刮开层图案12
+            'images/reward_pattern13.jpg',  // 奖品刮开层图案13
+            'images/normal23.jpg',
+            'images/normal13.jpg',
+            'images/normal28.jpg',
+            'images/normal32.jpg',
         ];
 
         // 定义普通图片路径数组（至少20张）
@@ -92,7 +96,6 @@ class ScratchCard {
             'images/normal10.jpg',
             'images/normal11.jpg',
             'images/normal12.jpg',
-            'images/normal13.jpg',
             'images/normal14.jpg',
             'images/normal15.jpg',
             'images/normal16.jpg',
@@ -102,21 +105,28 @@ class ScratchCard {
             'images/normal20.jpg',
             'images/normal21.jpg',
             'images/normal22.jpg',
-            'images/normal23.jpg',
             'images/normal24.jpg',
             'images/normal25.jpg',
             'images/normal26.jpg',
             'images/normal27.jpg',
-            'images/normal28.jpg',
             'images/normal29.jpg',
             'images/normal30.jpg',
             'images/normal31.jpg',
-            'images/normal32.jpg',
             'images/normal33.jpg',
             'images/normal34.jpg',
             'images/normal35.jpg',
             'images/normal36.jpg',
-            'images/normal37.jpg'
+            'images/normal37.jpg',
+            'images/reward_pattern1.jpg',  // 奖品刮开层图案1
+            'images/reward_pattern2.jpg',  // 奖品刮开层图案2
+            'images/reward_pattern3.jpg',  // 奖品刮开层图案3
+            'images/reward_pattern4.jpg',  // 奖品刮开层图案4
+            'images/reward_pattern5.jpg',  // 奖品刮开层图案5
+            'images/reward_pattern6.jpg',  // 奖品刮开层图案6
+            'images/reward_pattern7.jpg',  // 奖品刮开层图案7
+            'images/reward_pattern8.jpg',  // 奖品刮开层图案8
+            'images/reward_pattern9.jpg',  // 奖品刮开层图案9
+            'images/reward_pattern10.jpg'  // 奖品刮开层图案10
         ];
 
         let loadedImages = 0;
@@ -438,7 +448,7 @@ class ScratchCard {
                     
                     // 绘制奖品文字（在数字层，被刮开层覆盖）
                     this.numberCtx.fillStyle = '#ff0000';
-                    this.numberCtx.font = 'bold 24px Microsoft YaHei';
+                    this.numberCtx.font = 'bold 13px Microsoft YaHei';
                     this.numberCtx.textAlign = 'center';
                     this.numberCtx.textBaseline = 'middle';
                     this.numberCtx.fillText(cell.reward, x + this.cellWidth / 2, y + this.cellHeight / 2);
@@ -474,11 +484,15 @@ class ScratchCard {
             }
         }
         
-        // 随机选择一张图片作为刮刮层封面
-        const allImages = [...this.normalImages, ...this.rewardPatternImages];
-        const randomIndex = Math.floor(Math.random() * allImages.length);
-        const coverImage = allImages[randomIndex];
+        // // 随机选择一张图片作为刮刮层封面
+        // const allImages = [...this.normalImages, ...this.rewardPatternImages];
+        // const randomIndex = Math.floor(Math.random() * allImages.length);
+        // const coverImage = allImages[randomIndex];
         
+        // 从rewardPatternImages数组中指定选择一个图片作为刮刮层封面
+        // const randomIndex = Math.floor(Math.random() * this.rewardPatternImages.length);
+        const coverImage = this.rewardPatternImages[0];
+
         if (coverImage) {
             // 创建图案
             const patternCanvas = document.createElement('canvas');
