@@ -24,20 +24,17 @@ class ScratchCard {
         
         // 设置奖励文字
         this.rewards = [
-            '冰淇淋红茶',
-            '浮生半日闲',
-            '莓莓奶绿',
-            '鸭屎香柠檬茶',
-            '古茗杨枝甘露',
-            '海盐芝士芒果',
-            '海盐芝士芋圆',
-            '鲜芋仙芋圆三号',
-            '海盐芝士青提',
-            '大叔奶茶'
+            '爆芋泥蛋糕',
+            '莓莓雪山',
+            '莓莓麻薯',
+            '椰椰爆浆',
+            '黑糖牛乳啵啵',
+            '糖葫芦',
+            '烤土豆'
         ];
         
         // 设置奖励概率
-        this.rewardProbabilities = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+        this.rewardProbabilities = [12, 12, 12, 12, 12, 20, 20];
         
         // 设置中奖区域数量的概率
         this.winningAreaProbabilities = [0, 100, 0, 0, 0, 0];
@@ -73,13 +70,9 @@ class ScratchCard {
     loadPatternImages() { 
         // 定义图案图片路径数组
         const rewardPatternPaths = [
-            'images/reward_pattern11.jpg',  // 奖品刮开层图案11
-            'images/reward_pattern12.jpg',  // 奖品刮开层图案12
-            'images/reward_pattern13.jpg',  // 奖品刮开层图案13
-            'images/normal23.jpg',
-            'images/normal13.jpg',
-            'images/normal28.jpg',
-            'images/normal32.jpg',
+            'images/reward_pattern10.jpg',  // 奖品刮开层图案10
+            'images/reward_pattern14.jpg',  // 奖品刮开层图案14
+            'images/reward_pattern15.jpg',  // 奖品刮开层图案15
         ];
 
         // 定义普通图片路径数组（至少20张）
@@ -126,7 +119,13 @@ class ScratchCard {
             'images/reward_pattern7.jpg',  // 奖品刮开层图案7
             'images/reward_pattern8.jpg',  // 奖品刮开层图案8
             'images/reward_pattern9.jpg',  // 奖品刮开层图案9
-            'images/reward_pattern10.jpg'  // 奖品刮开层图案10
+            'images/reward_pattern11.jpg',  // 奖品刮开层图案11
+            'images/reward_pattern12.jpg',  // 奖品刮开层图案12
+            'images/reward_pattern13.jpg',  // 奖品刮开层图案13
+            'images/normal23.jpg',
+            'images/normal13.jpg',
+            'images/normal28.jpg',
+            'images/normal32.jpg',
         ];
 
         let loadedImages = 0;
